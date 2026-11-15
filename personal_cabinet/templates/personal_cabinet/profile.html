@@ -1,0 +1,50 @@
+{% extends 'personal_cabinet/base.html' %}
+
+{% block title %}Профіль | Мій кабінет{% endblock %}
+
+{% block content %}
+    <p class="eyebrow">Головна сторінка</p>
+    {% if profile_name %}
+        <h1>Вітаємо, {{ profile_name }}!</h1>
+    {% else %}
+        <h1>Ваш профіль</h1>
+    {% endif %}
+    <p class="intro">Налаштуйте ім'я та тему оформлення особистого кабінету.</p>
+
+    <section class="card">
+        {% if last_visit %}
+            <p class="muted">Останнє відвідування: <strong>{{ last_visit }}</strong></p>
+        {% else %}
+            <p class="muted">Це ваш перший візит до особистого кабінету.</p>
+        {% endif %}
+
+        <form method="post" class="stack">
+            {% csrf_token %}
+            <div>
+                <label for="profile-name">Ваше ім'я</label>
+                <input
+                    id="profile-name"
+                    name="name"
+                    type="text"
+                    value="{{ profile_name }}"
+                    maxlength="100"
+                    autocomplete="name"
+                    placeholder="Наприклад, Олена"
+                    required
+                >
+            </div>
+            <div>
+                <label for="profile-theme">Тема оформлення</label>
+                <select id="profile-theme" name="theme">
+                    <option value="light" {% if theme == 'light' %}selected{% endif %}>Світла</option>
+                    <option value="dark" {% if theme == 'dark' %}selected{% endif %}>Темна</option>
+                </select>
+            </div>
+            {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+            <div class="actions">
+                <button type="submit">Зберегти профіль</button>
+                <a class="button button-secondary" href="{% url 'personal_cabinet:tasks' %}">Перейти до справ</a>
+            </div>
+        </form>
+    </section>
+{% endblock %}

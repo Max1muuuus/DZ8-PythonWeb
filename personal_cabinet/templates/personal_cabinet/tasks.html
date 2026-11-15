@@ -1,0 +1,48 @@
+{% extends 'personal_cabinet/base.html' %}
+
+{% block title %}Мої справи | Мій кабінет{% endblock %}
+
+{% block content %}
+    <p class="eyebrow">План на день</p>
+    <h1>Мої справи</h1>
+    <p class="intro">Записуйте справи та відмічайте виконане, видаляючи його зі списку.</p>
+
+    <section class="card">
+        <p class="count">Усього справ: <strong>{{ tasks|length }}</strong></p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+            <label for="new-task">Нова справа</label>
+            <input
+                id="new-task"
+                name="task"
+                type="text"
+                maxlength="200"
+                placeholder="Наприклад, підготувати звіт"
+                required
+            >
+            {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+            <div class="actions">
+                <button type="submit">Додати справу</button>
+            </div>
+        </form>
+
+        {% if tasks %}
+            <ul class="task-list">
+                {% for task in tasks %}
+                    <li class="task">
+                        <span class="task-name">{{ task }}</span>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="index" value="{{ forloop.counter0 }}">
+                            <button class="button-danger" type="submit" aria-label="Видалити справу: {{ task }}">Видалити</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">Список справ поки порожній.</p>
+        {% endif %}
+    </section>
+{% endblock %}
